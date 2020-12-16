@@ -1,3 +1,5 @@
 cython
 sporco
 ipykernel
+sphinx
+sphinx-autobuild
