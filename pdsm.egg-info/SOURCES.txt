@@ -1,0 +1,12 @@
+MANIFEST.in
+requirements.txt
+setup.py
+pdsm/__init__.py
+pdsm/_thesis.py
+pdsm/pdsm.py
+pdsm.egg-info/PKG-INFO
+pdsm.egg-info/SOURCES.txt
+pdsm.egg-info/dependency_links.txt
+pdsm.egg-info/entry_points.txt
+pdsm.egg-info/requires.txt
+pdsm.egg-info/top_level.txt
