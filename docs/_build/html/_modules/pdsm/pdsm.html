@@ -1,0 +1,231 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pdsm.pdsm &#8212; pdsm 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for pdsm.pdsm</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="c1"># import numpy.typing as npt</span>
+<span class="kn">import</span> <span class="nn">sporco.cnvrep</span> <span class="k">as</span> <span class="nn">cr</span>
+<span class="kn">import</span> <span class="nn">sporco.util</span> <span class="k">as</span> <span class="nn">util</span>
+<span class="kn">import</span> <span class="nn">sporco</span> <span class="k">as</span> <span class="nn">sp</span>
+<span class="kn">import</span> <span class="nn">sporco.common</span> <span class="k">as</span> <span class="nn">sc</span>
+
+
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Literal</span>
+
+
+<div class="viewcode-block" id="Pdsm"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.Pdsm">[docs]</a><span class="k">class</span> <span class="nc">Pdsm</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">IterativeSolver</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Base class for Primal-Dual Splitting Method (PDSM).</span>
+
+<span class="sd">    Solve an optimisation problem of the form</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \newcommand{\argmin}{\mathop{\rm arg~min}\limits}</span>
+<span class="sd">        \newcommand{\prox}{\mathop{\mathrm{prox}}\nolimits}</span>
+
+<span class="sd">        \argmin_{\mathbf{x}} F(\mathbf{x}) + G(\mathbf{x}) + H(\mathbf{L}\mathbf{x})</span>
+
+<span class="sd">    This class is intended to be a base class of other classes that</span>
+<span class="sd">    specialise to specific optimisation problems.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Pdsm.Option"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.Pdsm.Option">[docs]</a>    <span class="nd">@dataclass</span>
+    <span class="k">class</span> <span class="nc">Option</span><span class="p">:</span>
+        <span class="n">rho_p</span><span class="p">:</span> <span class="nb">float</span>
+        <span class="n">rho_d</span><span class="p">:</span> <span class="nb">float</span>
+        <span class="n">theta</span><span class="p">:</span> <span class="nb">float</span></div>
+
+    <span class="n">timer</span><span class="p">:</span> <span class="n">util</span><span class="o">.</span><span class="n">Timer</span>
+    <span class="n">opt</span><span class="p">:</span> <span class="n">Pdsm</span><span class="o">.</span><span class="n">Option</span>
+
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Pdsm</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create an Pdsm object and start its initialisation timer.&quot;&quot;&quot;</span>
+
+        <span class="n">instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Pdsm</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">timer</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">Timer</span><span class="p">([</span><span class="s1">&#39;init&#39;</span><span class="p">,</span> <span class="s1">&#39;solve&#39;</span><span class="p">,</span> <span class="s1">&#39;solve_wo_func&#39;</span><span class="p">,</span> <span class="s1">&#39;solve_wo_rsdl&#39;</span><span class="p">])</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s1">&#39;init&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">instance</span>
+
+<div class="viewcode-block" id="Pdsm.step"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.Pdsm.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Evaluate one step of below iteration</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \tilde{\mathbf{x}}_{n+1} &amp;= \prox_{\tau G}(\mathbf{x}_n - \tau\nabla F(\mathbf{x}_n) - \tau L^{\dagger}\mathbf{y}_n)\\</span>
+<span class="sd">            \tilde{\mathbf{y}}_{n+1} &amp;= \prox_{\sigma H^{*}}(\mathbf{y}_n - \sigma L(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n)\\</span>
+<span class="sd">            (\mathbf{x}_{n+1}, \mathbf{y}_{n+1}) &amp;= \rho_n(\tilde{\mathbf{x}}_{n+1}, \tilde{\mathbf{y}}_{n+1}) + (1 - \rho_n)(\mathbf{x}_{n}, \mathbf{y}_{n})</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_primal_step</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dual_step</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Pdsm.primal_step"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.Pdsm.primal_step">[docs]</a>    <span class="k">def</span> <span class="nf">primal_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \tilde{\mathbf{x}}_{n+1} = \prox_{\tau G}(\mathbf{x}_n - \tau\nabla F(\mathbf{x}_n) - \tau L^{\dagger}\mathbf{y}_n)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Pdsm.dual_step"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.Pdsm.dual_step">[docs]</a>    <span class="k">def</span> <span class="nf">dual_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \tilde{\mathbf{y}}_{n+1} = \prox_{\sigma H^{*}}(\mathbf{y}_n - \sigma L(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div></div>
+
+
+<div class="viewcode-block" id="GenericConvBPDN"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.GenericConvBPDN">[docs]</a><span class="k">class</span> <span class="nc">GenericConvBPDN</span><span class="p">(</span><span class="n">Pdsm</span><span class="p">):</span>
+
+<div class="viewcode-block" id="GenericConvBPDN.Option"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.GenericConvBPDN.Option">[docs]</a>    <span class="nd">@dataclass</span>
+    <span class="k">class</span> <span class="nc">Option</span><span class="p">(</span><span class="n">Pdsm</span><span class="o">.</span><span class="n">Option</span><span class="p">):</span>
+        <span class="k">pass</span></div></div>
+
+
+<div class="viewcode-block" id="ConvBPDNL1"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.ConvBPDNL1">[docs]</a><span class="k">class</span> <span class="nc">ConvBPDNL1</span><span class="p">(</span><span class="n">GenericConvBPDN</span><span class="p">):</span>
+<div class="viewcode-block" id="ConvBPDNL1.Option"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.ConvBPDNL1.Option">[docs]</a>    <span class="nd">@dataclass</span>
+    <span class="k">class</span> <span class="nc">Option</span><span class="p">(</span><span class="n">GenericConvBPDN</span><span class="o">.</span><span class="n">Option</span><span class="p">):</span>
+        <span class="n">h</span><span class="p">:</span> <span class="kc">None</span></div></div>
+
+
+<div class="viewcode-block" id="ConvBPDNL1L1"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.ConvBPDNL1L1">[docs]</a><span class="k">class</span> <span class="nc">ConvBPDNL1L1</span><span class="p">(</span><span class="n">GenericConvBPDN</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Solve the optimization problem</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \argmin_{\mathbf{x}} \| \mathbf{D}\mathbf{x} - \mathbf{s} \|_{1} + \| \mathbf{x} \|_{1}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">cri</span><span class="p">:</span> <span class="n">cr</span><span class="o">.</span><span class="n">CSC_ConvRepIndexing</span>
+
+<div class="viewcode-block" id="ConvBPDNL1L1.Option"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.ConvBPDNL1L1.Option">[docs]</a>    <span class="nd">@dataclass</span>
+    <span class="k">class</span> <span class="nc">Option</span><span class="p">(</span><span class="n">GenericConvBPDN</span><span class="o">.</span><span class="n">Option</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">D</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">S</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">dimK</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dimN</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Infer problem dimensions and set relevant attributes of self</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cri</span> <span class="o">=</span> <span class="n">cr</span><span class="o">.</span><span class="n">CSC_ConvRepIndexing</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">dimK</span><span class="o">=</span><span class="n">dimK</span><span class="p">,</span> <span class="n">dimN</span><span class="o">=</span><span class="n">dimN</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ConvBPDNL1L1.primal_step"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.ConvBPDNL1L1.primal_step">[docs]</a>    <span class="k">def</span> <span class="nf">primal_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \tilde{\mathbf{x}}_{n+1} &amp;= \prox_{\tau \|\bullet\|_{1}}(\mathbf{x}_n - \tau \mathbf{D}^{\dagger}\mathbf{y}_n)\\</span>
+<span class="sd">            &amp;= \mathcal{S}_{\tau}(\mathbf{x}_n - \tau \mathbf{D}^{\dagger}\mathbf{y}_n)\\</span>
+<span class="sd">            &amp;= \mathrm{sign}(\mathbf{x}_n - \tau \mathbf{D}^{\dagger}\mathbf{y}_n) \odot \max(0, |\mathbf{x}_n - \tau \mathbf{D}^{\dagger}\mathbf{y}_n| - \tau)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="ConvBPDNL1L1.dual_step"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.ConvBPDNL1L1.dual_step">[docs]</a>    <span class="k">def</span> <span class="nf">dual_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \tilde{\mathbf{y}}_{n+1} &amp;= \prox_{\sigma \|\bullet\|_{1}^{*}}(\mathbf{y}_n - \sigma \mathbf{D}(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n))\\</span>
+<span class="sd">            &amp;= \mathbf{y}_n - \sigma \mathbf{D}(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n) - \sigma\prox_{\frac{1}{\sigma}\|\bullet\|_{1}}(\frac{\mathbf{y}_n}{\sigma} - \mathbf{D}(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n))\\</span>
+<span class="sd">            &amp;= \mathbf{y}_n - \sigma \mathbf{D}(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n) - \sigma\mathcal{S}_{\frac{1}{\sigma}}(\frac{\mathbf{y}_n}{\sigma} - \mathbf{D}(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n))\\</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">pdsm</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../pdsm.html">pdsm package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, chocobo333.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

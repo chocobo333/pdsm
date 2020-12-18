@@ -1,0 +1,390 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>sporco.common &#8212; pdsm 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for sporco.common</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># Copyright (C) 2015-2019 by Brendt Wohlberg &lt;brendt@ieee.org&gt;</span>
+<span class="c1"># All rights reserved. BSD 3-clause License.</span>
+<span class="c1"># This file is part of the SPORCO package. Details of the copyright</span>
+<span class="c1"># and user license can be found in the &#39;LICENSE.txt&#39; file distributed</span>
+<span class="c1"># with the package.</span>
+
+<span class="sd">&quot;&quot;&quot;Common functions and classes iterative solver classes&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">future.utils</span> <span class="kn">import</span> <span class="n">with_metaclass</span>
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="kn">import</span> <span class="nb">object</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Brendt Wohlberg &lt;brendt@ieee.org&gt;&quot;&quot;&quot;</span>
+
+
+
+<span class="k">def</span> <span class="nf">_fix_nested_class_lookup</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">nstnm</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Fix name lookup problem that prevents pickling of classes with</span>
+<span class="sd">    nested class definitions. The approach is loosely based on that</span>
+<span class="sd">    implemented at https://git.io/viGqU , simplified and modified to</span>
+<span class="sd">    work in both Python 2.7 and Python 3.x.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cls : class</span>
+<span class="sd">      Outer class to which fix is to be applied</span>
+<span class="sd">    nstnm : string</span>
+<span class="sd">      Name of nested (inner) class to be renamed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Check that nstnm is an attribute of cls</span>
+    <span class="k">if</span> <span class="n">nstnm</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+        <span class="c1"># Get the attribute of cls by its name</span>
+        <span class="n">nst</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">nstnm</span><span class="p">]</span>
+        <span class="c1"># Check that the attribute is a class</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nst</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+            <span class="c1"># Get the module in which the outer class is defined</span>
+            <span class="n">mdl</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span><span class="p">]</span>
+            <span class="c1"># Construct an extended name by concatenating inner and outer</span>
+            <span class="c1"># names</span>
+            <span class="n">extnm</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="n">nst</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="c1"># Allow lookup of the nested class within the module via</span>
+            <span class="c1"># its extended name</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">mdl</span><span class="p">,</span> <span class="n">extnm</span><span class="p">,</span> <span class="n">nst</span><span class="p">)</span>
+            <span class="c1"># Change the nested class name to the extended name</span>
+            <span class="n">nst</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">extnm</span>
+    <span class="k">return</span> <span class="bp">cls</span>
+
+
+
+<span class="k">def</span> <span class="nf">_fix_dynamic_class_lookup</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pstfx</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Fix name lookup problem that prevents pickling of dynamically</span>
+<span class="sd">    defined classes.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cls : class</span>
+<span class="sd">      Dynamically generated class to which fix is to be applied</span>
+<span class="sd">    pstfx : string</span>
+<span class="sd">      Postfix that can be used to identify dynamically generated classes</span>
+<span class="sd">      that are equivalent by construction</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Extended name for the class that will be added to the module namespace</span>
+    <span class="n">extnm</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">pstfx</span>
+    <span class="c1"># Get the module in which the dynamic class is defined</span>
+    <span class="n">mdl</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span><span class="p">]</span>
+    <span class="c1"># Allow lookup of the dynamically generated class within the module via</span>
+    <span class="c1"># its extended name</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">mdl</span><span class="p">,</span> <span class="n">extnm</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span>
+    <span class="c1"># Change the dynamically generated class name to the extended name</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;__qualname__&#39;</span><span class="p">):</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="vm">__qualname__</span> <span class="o">=</span> <span class="n">extnm</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">extnm</span>
+
+
+
+
+
+<span class="k">class</span> <span class="nc">_IterSolver_Meta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Metaclass for iterative solver classes that handles</span>
+<span class="sd">    intialisation of IterationStats namedtuple and applies</span>
+<span class="sd">    :func:`_fix_nested_class_lookup` to class definitions to fix</span>
+<span class="sd">    problems with lookup of nested class definitions when using pickle.</span>
+<span class="sd">    It is also responsible for stopping the object initialisation timer</span>
+<span class="sd">    at the end of initialisation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+
+        <span class="c1"># Initialise named tuple type for recording iteration statistics</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">IterationStats</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;IterationStats&#39;</span><span class="p">,</span>
+                                                    <span class="bp">cls</span><span class="o">.</span><span class="n">itstat_fields</span><span class="p">())</span>
+        <span class="c1"># Apply _fix_nested_class_lookup function to class after creation</span>
+        <span class="n">_fix_nested_class_lookup</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">nstnm</span><span class="o">=</span><span class="s1">&#39;Options&#39;</span><span class="p">)</span>
+
+
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="c1"># Initialise instance</span>
+        <span class="n">instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">_IterSolver_Meta</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># Stop initialisation timer</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="s1">&#39;init&#39;</span><span class="p">)</span>
+        <span class="c1"># Return instance</span>
+        <span class="k">return</span> <span class="n">instance</span>
+
+
+
+
+
+<span class="k">class</span> <span class="nc">IterativeSolver</span><span class="p">(</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">_IterSolver_Meta</span><span class="p">,</span> <span class="nb">object</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot;Base class for iterative solver classes, providing some common</span>
+<span class="sd">    infrastructure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">itstat_fields_objfn</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="sd">&quot;&quot;&quot;Fields in IterationStats associated with the objective function&quot;&quot;&quot;</span>
+    <span class="n">itstat_fields_alg</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="sd">&quot;&quot;&quot;Fields in IterationStats associated with the specific solver</span>
+<span class="sd">    algorithm, e.g. ADMM or FISTA&quot;&quot;&quot;</span>
+    <span class="n">itstat_fields_extra</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="sd">&quot;&quot;&quot;Non-standard fields in IterationStats&quot;&quot;&quot;</span>
+
+
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">itstat_fields</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construct tuple of field names used to initialise</span>
+<span class="sd">        IterationStats named tuple.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;Iter&#39;</span><span class="p">,)</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">itstat_fields_objfn</span> <span class="o">+</span> \
+            <span class="bp">cls</span><span class="o">.</span><span class="n">itstat_fields_alg</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">itstat_fields_extra</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;Time&#39;</span><span class="p">,)</span>
+
+
+
+    <span class="k">def</span> <span class="nf">set_dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">opt</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the `dtype` attribute. If opt[&#39;DataType&#39;] has a value</span>
+<span class="sd">        other than None, it overrides the `dtype` parameter of this</span>
+<span class="sd">        method. No changes are made if the `dtype` attribute already</span>
+<span class="sd">        exists and has a value other than &#39;None&#39;.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        opt : :class:`cdict.ConstrainedDict` object</span>
+<span class="sd">          Algorithm options</span>
+<span class="sd">        dtype : data-type</span>
+<span class="sd">          Data type for working variables (overridden by &#39;DataType&#39; option)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Take no action of self.dtype exists and is not None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;dtype&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># DataType option overrides explicitly specified data type</span>
+            <span class="k">if</span> <span class="n">opt</span><span class="p">[</span><span class="s1">&#39;DataType&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">opt</span><span class="p">[</span><span class="s1">&#39;DataType&#39;</span><span class="p">])</span>
+
+
+
+    <span class="k">def</span> <span class="nf">set_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">dval</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set an object attribute by its name. The attribute value</span>
+<span class="sd">        can be specified as a primary value `val`, and as default</span>
+<span class="sd">        value &#39;dval` that will be used if the primary value is None.</span>
+<span class="sd">        This arrangement allows an attribute to be set from an entry</span>
+<span class="sd">        in an options object, passed as `val`, while specifying a</span>
+<span class="sd">        default value to use, passed as `dval` in the event that the</span>
+<span class="sd">        options entry is None. Unless `reset` is True, the attribute</span>
+<span class="sd">        is only set if it doesn&#39;t exist, or if it exists with value</span>
+<span class="sd">        None. This arrangement allows for attributes to be set in</span>
+<span class="sd">        both base and derived class initialisers, with the derived</span>
+<span class="sd">        class value taking preference.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : string</span>
+<span class="sd">          Attribute name</span>
+<span class="sd">        val : any</span>
+<span class="sd">          Primary attribute value</span>
+<span class="sd">        dval : any</span>
+<span class="sd">          Default attribute value in case `val` is None</span>
+<span class="sd">        dtype : data-type, optional (default None)</span>
+<span class="sd">          If the `dtype` parameter is not None, the attribute `name` is</span>
+<span class="sd">          set to `val` (which is assumed to be of numeric type) after</span>
+<span class="sd">          conversion to the specified type.</span>
+<span class="sd">        reset : bool, optional (default False)</span>
+<span class="sd">          Flag indicating whether attribute assignment should be</span>
+<span class="sd">          conditional on the attribute not existing or having value None.</span>
+<span class="sd">          If False, an attribute value other than None will not be</span>
+<span class="sd">          overwritten.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># If `val` is None and `dval` is not None, replace it with dval</span>
+        <span class="k">if</span> <span class="n">dval</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">dval</span>
+
+        <span class="c1"># If dtype is not None, assume val is numeric and convert it to</span>
+        <span class="c1"># type dtype</span>
+        <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">dtype</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">dtype</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+        <span class="c1"># Set attribute value depending on reset flag and whether the</span>
+        <span class="c1"># attribute exists and is None</span>
+        <span class="k">if</span> <span class="n">reset</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="ow">or</span> \
+           <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+
+
+
+
+<span class="k">def</span> <span class="nf">solve_status_str</span><span class="p">(</span><span class="n">hdrlbl</span><span class="p">,</span> <span class="n">fmtmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fwdth0</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">fwdthdlt</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+                     <span class="n">fprec</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Construct header and format details for status display of an</span>
+<span class="sd">    iterative solver.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    hdrlbl : tuple of strings</span>
+<span class="sd">      Tuple of field header strings</span>
+<span class="sd">    fmtmap : dict or None, optional (default None)</span>
+<span class="sd">      A dict providing a mapping from field header strings to print</span>
+<span class="sd">      format strings, providing a mechanism for fields with print</span>
+<span class="sd">      formats that depart from the standard format</span>
+<span class="sd">    fwdth0 : int, optional (default 4)</span>
+<span class="sd">      Number of characters in first field formatted for integers</span>
+<span class="sd">    fwdthdlt : int, optional (default 6)</span>
+<span class="sd">      The width of fields formatted for floats is the sum of the value</span>
+<span class="sd">      of this parameter and the field precision</span>
+<span class="sd">    fprec : int, optional (default 2)</span>
+<span class="sd">      Precision of fields formatted for floats</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    hdrstr : string</span>
+<span class="sd">      Complete header string</span>
+<span class="sd">    fmtstr : string</span>
+<span class="sd">      Complete print formatting string for numeric values</span>
+<span class="sd">    nsep : integer</span>
+<span class="sd">      Number of characters in separator string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">fmtmap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fmtmap</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">fwdthn</span> <span class="o">=</span> <span class="n">fprec</span> <span class="o">+</span> <span class="n">fwdthdlt</span>
+
+    <span class="c1"># Construct a list specifying the format string for each field.</span>
+    <span class="c1"># Use format string from fmtmap if specified, otherwise use</span>
+    <span class="c1"># a %d specifier with field width fwdth0 for the first field,</span>
+    <span class="c1"># or a %e specifier with field width fwdthn and precision</span>
+    <span class="c1"># fprec</span>
+    <span class="n">fldfmt</span> <span class="o">=</span> <span class="p">[</span><span class="n">fmtmap</span><span class="p">[</span><span class="n">lbl</span><span class="p">]</span> <span class="k">if</span> <span class="n">lbl</span> <span class="ow">in</span> <span class="n">fmtmap</span> <span class="k">else</span>
+              <span class="p">((</span><span class="s1">&#39;</span><span class="si">%%%d</span><span class="s1">d&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">fwdth0</span><span class="p">))</span> <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span>
+               <span class="p">((</span><span class="s1">&#39;</span><span class="si">%%%d</span><span class="s1">.</span><span class="si">%d</span><span class="s1">e&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">fwdthn</span><span class="p">,</span> <span class="n">fprec</span><span class="p">))))</span>
+              <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">lbl</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">hdrlbl</span><span class="p">)]</span>
+    <span class="n">fmtstr</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;  &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fldfmt</span><span class="p">)</span>
+
+    <span class="c1"># Construct a list of field widths for each field by extracting</span>
+    <span class="c1"># field widths from field format strings</span>
+    <span class="n">cre</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;%-?(\d+)&#39;</span><span class="p">)</span>
+    <span class="n">fldwid</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">fmt</span> <span class="ow">in</span> <span class="n">fldfmt</span><span class="p">:</span>
+        <span class="n">mtch</span> <span class="o">=</span> <span class="n">cre</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">fmt</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mtch</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Format string &#39;</span><span class="si">%s</span><span class="s2">&#39; does not contain field &quot;</span>
+                             <span class="s2">&quot;width&quot;</span> <span class="o">%</span> <span class="n">fmt</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fldwid</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">mtch</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)))</span>
+
+    <span class="c1"># Construct list of field header strings formatted to the</span>
+    <span class="c1"># appropriate field width, and join to construct a combined field</span>
+    <span class="c1"># header string</span>
+    <span class="n">hdrlst</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;</span><span class="si">%-*s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">t</span><span class="p">))</span> <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">hdrlbl</span><span class="p">,</span> <span class="n">fldwid</span><span class="p">)]</span>
+    <span class="n">hdrstr</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;  &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">hdrlst</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">hdrstr</span><span class="p">,</span> <span class="n">fmtstr</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">hdrstr</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">pdsm</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../pdsm.html">pdsm package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, chocobo333.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
