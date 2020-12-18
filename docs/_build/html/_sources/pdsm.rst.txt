@@ -17,6 +17,7 @@ pdsm.pdsm module
 
 .. automodule:: pdsm.pdsm
    :members:
+   :private-members:
    :undoc-members:
    :show-inheritance:
 

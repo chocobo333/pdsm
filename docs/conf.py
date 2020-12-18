@@ -196,5 +196,10 @@ todo_include_todos = True
 # Include Python objects as they appear in source files
 # Default: alphabetically ('alphabetical')
 autodoc_member_order = 'bysource'
+autodoc_default_options = {
+    'member-order': 'bysource',
+    'special-members': '__init__',
+    'undoc-members': True,
+}
 # Default flags used by autodoc directives
 autodoc_default_flags = ['members', 'show-inheritance']

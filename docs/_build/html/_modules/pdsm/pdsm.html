@@ -42,11 +42,13 @@
 <span class="kn">import</span> <span class="nn">sporco.util</span> <span class="k">as</span> <span class="nn">util</span>
 <span class="kn">import</span> <span class="nn">sporco</span> <span class="k">as</span> <span class="nn">sp</span>
 <span class="kn">import</span> <span class="nn">sporco.common</span> <span class="k">as</span> <span class="nn">sc</span>
+<span class="kn">import</span> <span class="nn">sporco.linalg</span> <span class="k">as</span> <span class="nn">sl</span>
+<span class="kn">import</span> <span class="nn">sporco.prox</span> <span class="k">as</span> <span class="nn">spr</span>
 
 
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Literal</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span>
 
 
 <div class="viewcode-block" id="Pdsm"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.Pdsm">[docs]</a><span class="k">class</span> <span class="nc">Pdsm</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">IterativeSolver</span><span class="p">):</span>
@@ -66,12 +68,23 @@
 
 <div class="viewcode-block" id="Pdsm.Option"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.Pdsm.Option">[docs]</a>    <span class="nd">@dataclass</span>
     <span class="k">class</span> <span class="nc">Option</span><span class="p">:</span>
-        <span class="n">rho_p</span><span class="p">:</span> <span class="nb">float</span>
-        <span class="n">rho_d</span><span class="p">:</span> <span class="nb">float</span>
-        <span class="n">theta</span><span class="p">:</span> <span class="nb">float</span></div>
+        <span class="n">tau</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">rho</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span></div>
 
     <span class="n">timer</span><span class="p">:</span> <span class="n">util</span><span class="o">.</span><span class="n">Timer</span>
     <span class="n">opt</span><span class="p">:</span> <span class="n">Pdsm</span><span class="o">.</span><span class="n">Option</span>
+
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dytpe</span>
+
+    <span class="n">D</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="sd">&quot;&quot;&quot;Dictionaries&quot;&quot;&quot;</span>
+    <span class="n">_X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="sd">&quot;&quot;&quot;Coefficients maps&quot;&quot;&quot;</span>
+    <span class="n">S</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="sd">&quot;&quot;&quot;Signal images&quot;&quot;&quot;</span>
+    <span class="n">Y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="sd">&quot;&quot;&quot;Dual variable&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Pdsm</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Create an Pdsm object and start its initialisation timer.&quot;&quot;&quot;</span>
@@ -80,6 +93,20 @@
         <span class="n">instance</span><span class="o">.</span><span class="n">timer</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">Timer</span><span class="p">([</span><span class="s1">&#39;init&#39;</span><span class="p">,</span> <span class="s1">&#39;solve&#39;</span><span class="p">,</span> <span class="s1">&#39;solve_wo_func&#39;</span><span class="p">,</span> <span class="s1">&#39;solve_wo_rsdl&#39;</span><span class="p">])</span>
         <span class="n">instance</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s1">&#39;init&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">instance</span>
+
+<div class="viewcode-block" id="Pdsm.__init__"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.Pdsm.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">X</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_prev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xinit</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_prev</span> <span class="o">=</span> <span class="n">X</span></div>
+
+<div class="viewcode-block" id="Pdsm._xinit"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.Pdsm._xinit">[docs]</a>    <span class="k">def</span> <span class="nf">_xinit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize primal variable `X`&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Pdsm._yinit"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.Pdsm._yinit">[docs]</a>    <span class="k">def</span> <span class="nf">_yinit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize primal variable `Y`&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="Pdsm.step"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.Pdsm.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Evaluate one step of below iteration</span>
@@ -93,7 +120,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_primal_step</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dual_step</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Pdsm.primal_step"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.Pdsm.primal_step">[docs]</a>    <span class="k">def</span> <span class="nf">primal_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Pdsm._primal_step"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.Pdsm._primal_step">[docs]</a>    <span class="k">def</span> <span class="nf">_primal_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        .. math::</span>
@@ -101,26 +128,103 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Pdsm.dual_step"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.Pdsm.dual_step">[docs]</a>    <span class="k">def</span> <span class="nf">dual_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Pdsm._dual_step"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.Pdsm._dual_step">[docs]</a>    <span class="k">def</span> <span class="nf">_dual_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \tilde{\mathbf{y}}_{n+1} = \prox_{\sigma H^{*}}(\mathbf{y}_n - \sigma L(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">pass</span></div></div>
+        <span class="k">pass</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">X</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_X</span>
+
+    <span class="nd">@X</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">X</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_prev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_X</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_X</span> <span class="o">=</span> <span class="n">value</span></div>
 
 
 <div class="viewcode-block" id="GenericConvBPDN"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.GenericConvBPDN">[docs]</a><span class="k">class</span> <span class="nc">GenericConvBPDN</span><span class="p">(</span><span class="n">Pdsm</span><span class="p">):</span>
 
 <div class="viewcode-block" id="GenericConvBPDN.Option"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.GenericConvBPDN.Option">[docs]</a>    <span class="nd">@dataclass</span>
     <span class="k">class</span> <span class="nc">Option</span><span class="p">(</span><span class="n">Pdsm</span><span class="o">.</span><span class="n">Option</span><span class="p">):</span>
-        <span class="k">pass</span></div></div>
+        <span class="k">pass</span></div>
+
+    <span class="n">Df</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="sd">&quot;&quot;&quot;`D` in FFT domain&quot;&quot;&quot;</span>
+    <span class="n">_Xf</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="sd">&quot;&quot;&quot;`X` in FFT domain&quot;&quot;&quot;</span>
+    <span class="n">Sf</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="sd">&quot;&quot;&quot;`S` in FFT domain&quot;&quot;&quot;</span>
+    <span class="n">Yf</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="sd">&quot;&quot;&quot;`Y` in FFT domain&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="GenericConvBPDN.__init__"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.GenericConvBPDN.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">D</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">S</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">dimK</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dimN</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float</span>
+
+        <span class="c1"># Infer problem dimensions and set relevant attributes of self</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cri</span> <span class="o">=</span> <span class="n">cr</span><span class="o">.</span><span class="n">CSC_ConvRepIndexing</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">dimK</span><span class="o">=</span><span class="n">dimK</span><span class="p">,</span> <span class="n">dimN</span><span class="o">=</span><span class="n">dimN</span><span class="p">)</span>
+
+        <span class="c1"># Reshape D and S to standard layout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">shpD</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">S</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">shpS</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+        <span class="c1"># Compute signal in DFT domain</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Sf</span> <span class="o">=</span> <span class="n">sl</span><span class="o">.</span><span class="n">rfftn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">axisN</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setdict</span><span class="p">()</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Xf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Xf_prev</span> <span class="o">=</span> <span class="n">sl</span><span class="o">.</span><span class="n">rfftn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">Nv</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">axisN</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GenericConvBPDN.reconstruct"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.GenericConvBPDN.reconstruct">[docs]</a>    <span class="k">def</span> <span class="nf">reconstruct</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">sl</span><span class="o">.</span><span class="n">irfftn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Df</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">Xf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">Nv</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">axisN</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GenericConvBPDN.setdict"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.GenericConvBPDN.setdict">[docs]</a>    <span class="k">def</span> <span class="nf">setdict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">D</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">D</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Df</span> <span class="o">=</span> <span class="n">sl</span><span class="o">.</span><span class="n">rfftn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">D</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">Nv</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">axisN</span><span class="p">)</span>
+        <span class="c1"># Compute D^H S</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DSf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Df</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">Sf</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">Cd</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">DSf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DSf</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">axisC</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GenericConvBPDN._xinit"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.GenericConvBPDN._xinit">[docs]</a>    <span class="k">def</span> <span class="nf">_xinit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize primal variable `X`&quot;&quot;&quot;</span>
+        <span class="n">Xf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Df</span><span class="p">)</span> <span class="o">/</span> <span class="n">sl</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Df</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Df</span><span class="p">))</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">Sf</span>
+        <span class="k">return</span> <span class="n">sl</span><span class="o">.</span><span class="n">irfftn</span><span class="p">(</span><span class="n">Xf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">Nv</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">axisN</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">X</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Getter of `X`&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">X</span>
+
+    <span class="nd">@X</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">X</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Update `X`, `X_prev` and `Xf`&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GenericConvBPDN</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">fset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Xf_prev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Xf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Xf</span> <span class="o">=</span> <span class="n">sl</span><span class="o">.</span><span class="n">rfftn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">Nv</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">axisN</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">Xf</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Getter of `Xf`&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Xf</span>
+
+    <span class="nd">@Xf</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">Xf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Update `X`, `X_prev` and `Xf`&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Xf_prev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Xf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Xf</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_prev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_X</span> <span class="o">=</span> <span class="n">sl</span><span class="o">.</span><span class="n">irfftn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Xf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">Nv</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">axisN</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ConvBPDNL1"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.ConvBPDNL1">[docs]</a><span class="k">class</span> <span class="nc">ConvBPDNL1</span><span class="p">(</span><span class="n">GenericConvBPDN</span><span class="p">):</span>
 <div class="viewcode-block" id="ConvBPDNL1.Option"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.ConvBPDNL1.Option">[docs]</a>    <span class="nd">@dataclass</span>
     <span class="k">class</span> <span class="nc">Option</span><span class="p">(</span><span class="n">GenericConvBPDN</span><span class="o">.</span><span class="n">Option</span><span class="p">):</span>
-        <span class="n">h</span><span class="p">:</span> <span class="kc">None</span></div></div>
+        <span class="n">h</span> <span class="o">=</span> <span class="kc">None</span></div></div>
 
 
 <div class="viewcode-block" id="ConvBPDNL1L1"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.ConvBPDNL1L1">[docs]</a><span class="k">class</span> <span class="nc">ConvBPDNL1L1</span><span class="p">(</span><span class="n">GenericConvBPDN</span><span class="p">):</span>
@@ -129,36 +233,58 @@
 <span class="sd">    Solve the optimization problem</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        \argmin_{\mathbf{x}} \| \mathbf{D}\mathbf{x} - \mathbf{s} \|_{1} + \| \mathbf{x} \|_{1}</span>
+<span class="sd">        \argmin_{\mathbf{x}} \| \mathbf{D}\mathbf{x} - \mathbf{s} \|_{1} + \lambda\| \mathbf{x} \|_{1}</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">cri</span><span class="p">:</span> <span class="n">cr</span><span class="o">.</span><span class="n">CSC_ConvRepIndexing</span>
-
 <div class="viewcode-block" id="ConvBPDNL1L1.Option"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.ConvBPDNL1L1.Option">[docs]</a>    <span class="nd">@dataclass</span>
-    <span class="k">class</span> <span class="nc">Option</span><span class="p">(</span><span class="n">GenericConvBPDN</span><span class="o">.</span><span class="n">Option</span><span class="p">):</span>
-        <span class="k">pass</span></div>
+    <span class="k">class</span> <span class="nc">Option</span><span class="p">(</span><span class="n">Pdsm</span><span class="o">.</span><span class="n">Option</span><span class="p">):</span>
+        <span class="n">lambda_</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span></div>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">D</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">S</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">dimK</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dimN</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># Infer problem dimensions and set relevant attributes of self</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cri</span> <span class="o">=</span> <span class="n">cr</span><span class="o">.</span><span class="n">CSC_ConvRepIndexing</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">dimK</span><span class="o">=</span><span class="n">dimK</span><span class="p">,</span> <span class="n">dimN</span><span class="o">=</span><span class="n">dimN</span><span class="p">)</span>
+    <span class="n">cri</span><span class="p">:</span> <span class="n">cr</span><span class="o">.</span><span class="n">CSC_ConvRepIndexing</span>
+    <span class="n">opt</span><span class="p">:</span> <span class="n">ConvBPDNL1L1</span><span class="o">.</span><span class="n">Option</span>
 
-<div class="viewcode-block" id="ConvBPDNL1L1.primal_step"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.ConvBPDNL1L1.primal_step">[docs]</a>    <span class="k">def</span> <span class="nf">primal_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ConvBPDNL1L1.__init__"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.ConvBPDNL1L1.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">D</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">S</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">opt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ConvBPDNL1L1</span><span class="o">.</span><span class="n">Option</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dimK</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dimN</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opt</span> <span class="o">=</span> <span class="n">ConvBPDNL1L1</span><span class="o">.</span><span class="n">Option</span><span class="p">()</span> <span class="k">if</span> <span class="n">opt</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">opt</span>
+
+        <span class="c1"># Initialize `X` and `Xf`</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]))</span>
+
+        <span class="c1"># Initialize `Y` and `Yf`</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yinit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Yf</span> <span class="o">=</span> <span class="n">sl</span><span class="o">.</span><span class="n">rfftn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">Nv</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">axisN</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_prev</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">X_prev</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]))</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">D</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">a</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ConvBPDNL1L1._yinit"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.ConvBPDNL1L1._yinit">[docs]</a>    <span class="k">def</span> <span class="nf">_yinit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize dual variable `Y` with zeros (adhocly)&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">shpX</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ConvBPDNL1L1._primal_step"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.ConvBPDNL1L1._primal_step">[docs]</a>    <span class="k">def</span> <span class="nf">_primal_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \tilde{\mathbf{x}}_{n+1} &amp;= \prox_{\tau \|\bullet\|_{1}}(\mathbf{x}_n - \tau \mathbf{D}^{\dagger}\mathbf{y}_n)\\</span>
-<span class="sd">            &amp;= \mathcal{S}_{\tau}(\mathbf{x}_n - \tau \mathbf{D}^{\dagger}\mathbf{y}_n)\\</span>
-<span class="sd">            &amp;= \mathrm{sign}(\mathbf{x}_n - \tau \mathbf{D}^{\dagger}\mathbf{y}_n) \odot \max(0, |\mathbf{x}_n - \tau \mathbf{D}^{\dagger}\mathbf{y}_n| - \tau)</span>
+<span class="sd">            \tilde{\mathbf{x}}_{n+1}=  &amp;\prox_{\tau\lambda \|\bullet\|_{1}}(\mathbf{x}_n - \tau \mathbf{D}^{\dagger}\mathbf{y}_n)\\</span>
+<span class="sd">            &amp;= \mathcal{S}_{\tau\lambda}(\mathbf{x}_n - \tau \mathbf{D}^{\dagger}\mathbf{y}_n)\\</span>
+<span class="sd">            &amp;= \mathrm{sign}(\mathbf{x}_n - \tau \mathbf{D}^{\dagger}\mathbf{y}_n) \odot \max(0, |\mathbf{x}_n - \tau \mathbf{D}^{\dagger}\mathbf{y}_n| - \tau\lambda)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">pass</span></div>
+        <span class="n">DYf</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Df</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">Yf</span>
+        <span class="n">tDYf</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">tau</span> <span class="o">*</span> <span class="n">DYf</span>
+        <span class="n">XtDYf</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Xf</span> <span class="o">-</span> <span class="n">tDYf</span>
+        <span class="n">XtDY</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">sl</span><span class="o">.</span><span class="n">irfftn</span><span class="p">(</span><span class="n">XtDYf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">Nv</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">axisN</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">spr</span><span class="o">.</span><span class="n">prox_l1</span><span class="p">(</span><span class="n">XtDY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">tau</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ConvBPDNL1L1.dual_step"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.ConvBPDNL1L1.dual_step">[docs]</a>    <span class="k">def</span> <span class="nf">dual_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ConvBPDNL1L1._dual_step"><a class="viewcode-back" href="../../pdsm.html#pdsm.pdsm.ConvBPDNL1L1._dual_step">[docs]</a>    <span class="k">def</span> <span class="nf">_dual_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            \tilde{\mathbf{y}}_{n+1} &amp;= \prox_{\sigma \|\bullet\|_{1}^{*}}(\mathbf{y}_n - \sigma \mathbf{D}(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n))\\</span>
-<span class="sd">            &amp;= \mathbf{y}_n - \sigma \mathbf{D}(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n) - \sigma\prox_{\frac{1}{\sigma}\|\bullet\|_{1}}(\frac{\mathbf{y}_n}{\sigma} - \mathbf{D}(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n))\\</span>
-<span class="sd">            &amp;= \mathbf{y}_n - \sigma \mathbf{D}(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n) - \sigma\mathcal{S}_{\frac{1}{\sigma}}(\frac{\mathbf{y}_n}{\sigma} - \mathbf{D}(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n))\\</span>
+<span class="sd">            \tilde{\mathbf{y}}_{n+1} &amp;= \prox_{\sigma\lambda \|\bullet\|_{1}^{*}}(\mathbf{y}_n - \sigma \mathbf{D}(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n))\\</span>
+<span class="sd">            &amp;= \mathbf{y}_n - \sigma \mathbf{D}(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n) - \sigma\prox_{\frac{1}{\sigma\lambda}\|\bullet\|_{1}}(\frac{\mathbf{y}_n}{\sigma\lambda} - \frac{1}{\lambda}\mathbf{D}(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n))\\</span>
+<span class="sd">            &amp;= \mathbf{y}_n - \sigma \mathbf{D}(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n) - \sigma\mathcal{S}_{\frac{1}{\sigma\lambda}}(\frac{\mathbf{y}_n}{\sigma\lambda} - \frac{1}{\lambda}\mathbf{D}(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n))\\</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div></div>
 </pre></div>

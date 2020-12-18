@@ -67,34 +67,87 @@
 specialise to specific optimisation problems.</p>
 <dl class="py class">
 <dt id="pdsm.pdsm.Pdsm.Option">
-<em class="property">class </em><code class="sig-name descname">Option</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rho_p</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span></em>, <em class="sig-param"><span class="n">rho_d</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span></em>, <em class="sig-param"><span class="n">theta</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdsm/pdsm.html#Pdsm.Option"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.Pdsm.Option" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">Option</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">sigma</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">rho</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdsm/pdsm.html#Pdsm.Option"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.Pdsm.Option" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <dl class="py attribute">
-<dt id="pdsm.pdsm.Pdsm.Option.rho_p">
-<code class="sig-name descname">rho_p</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></em><a class="headerlink" href="#pdsm.pdsm.Pdsm.Option.rho_p" title="Permalink to this definition">¶</a></dt>
+<dt id="pdsm.pdsm.Pdsm.Option.tau">
+<code class="sig-name descname">tau</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></em><em class="property"> = 1</em><a class="headerlink" href="#pdsm.pdsm.Pdsm.Option.tau" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt id="pdsm.pdsm.Pdsm.Option.rho_d">
-<code class="sig-name descname">rho_d</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></em><a class="headerlink" href="#pdsm.pdsm.Pdsm.Option.rho_d" title="Permalink to this definition">¶</a></dt>
+<dt id="pdsm.pdsm.Pdsm.Option.sigma">
+<code class="sig-name descname">sigma</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></em><em class="property"> = 1</em><a class="headerlink" href="#pdsm.pdsm.Pdsm.Option.sigma" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt id="pdsm.pdsm.Pdsm.Option.theta">
-<code class="sig-name descname">theta</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></em><a class="headerlink" href="#pdsm.pdsm.Pdsm.Option.theta" title="Permalink to this definition">¶</a></dt>
+<dt id="pdsm.pdsm.Pdsm.Option.rho">
+<code class="sig-name descname">rho</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></em><em class="property"> = 1</em><a class="headerlink" href="#pdsm.pdsm.Pdsm.Option.rho" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt id="pdsm.pdsm.Pdsm.Option.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">sigma</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">rho</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)">None</a><a class="headerlink" href="#pdsm.pdsm.Pdsm.Option.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="py attribute">
 <dt id="pdsm.pdsm.Pdsm.timer">
-<code class="sig-name descname">timer</code><em class="property">: sporco.util.Timer</em><a class="headerlink" href="#pdsm.pdsm.Pdsm.timer" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">timer</code><em class="property">: util.Timer</em><a class="headerlink" href="#pdsm.pdsm.Pdsm.timer" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="pdsm.pdsm.Pdsm.opt">
-<code class="sig-name descname">opt</code><em class="property">: <a class="reference internal" href="#pdsm.pdsm.Pdsm.Option" title="pdsm.pdsm.Pdsm.Option">pdsm.pdsm.Pdsm.Option</a></em><a class="headerlink" href="#pdsm.pdsm.Pdsm.opt" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">opt</code><em class="property">: <a class="reference internal" href="#pdsm.pdsm.Pdsm.Option" title="pdsm.pdsm.Pdsm.Option">Pdsm.Option</a></em><a class="headerlink" href="#pdsm.pdsm.Pdsm.opt" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pdsm.pdsm.Pdsm.dtype">
+<code class="sig-name descname">dtype</code><em class="property">: np.dytpe</em><a class="headerlink" href="#pdsm.pdsm.Pdsm.dtype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pdsm.pdsm.Pdsm.D">
+<code class="sig-name descname">D</code><em class="property">: np.ndarray</em><a class="headerlink" href="#pdsm.pdsm.Pdsm.D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dictionaries</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pdsm.pdsm.Pdsm.S">
+<code class="sig-name descname">S</code><em class="property">: np.ndarray</em><a class="headerlink" href="#pdsm.pdsm.Pdsm.S" title="Permalink to this definition">¶</a></dt>
+<dd><p>Signal images</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pdsm.pdsm.Pdsm.Y">
+<code class="sig-name descname">Y</code><em class="property">: np.ndarray</em><a class="headerlink" href="#pdsm.pdsm.Pdsm.Y" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dual variable</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pdsm.pdsm.Pdsm.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>numpy.ndarray<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdsm/pdsm.html#Pdsm.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.Pdsm.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pdsm.pdsm.Pdsm._X">
+<code class="sig-name descname">_X</code><em class="property">: np.ndarray</em><a class="headerlink" href="#pdsm.pdsm.Pdsm._X" title="Permalink to this definition">¶</a></dt>
+<dd><p>Coefficients maps</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pdsm.pdsm.Pdsm._xinit">
+<code class="sig-name descname">_xinit</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pdsm/pdsm.html#Pdsm._xinit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.Pdsm._xinit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize primal variable <cite>X</cite></p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pdsm.pdsm.Pdsm._yinit">
+<code class="sig-name descname">_yinit</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pdsm/pdsm.html#Pdsm._yinit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.Pdsm._yinit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize primal variable <cite>Y</cite></p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pdsm.pdsm.Pdsm.step">
@@ -107,18 +160,23 @@ specialise to specific optimisation problems.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pdsm.pdsm.Pdsm.primal_step">
-<code class="sig-name descname">primal_step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdsm/pdsm.html#Pdsm.primal_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.Pdsm.primal_step" title="Permalink to this definition">¶</a></dt>
+<dt id="pdsm.pdsm.Pdsm._primal_step">
+<code class="sig-name descname">_primal_step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdsm/pdsm.html#Pdsm._primal_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.Pdsm._primal_step" title="Permalink to this definition">¶</a></dt>
 <dd><div class="math notranslate nohighlight">
 \[\tilde{\mathbf{x}}_{n+1} = \prox_{\tau G}(\mathbf{x}_n - \tau\nabla F(\mathbf{x}_n) - \tau L^{\dagger}\mathbf{y}_n)\]</div>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pdsm.pdsm.Pdsm.dual_step">
-<code class="sig-name descname">dual_step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdsm/pdsm.html#Pdsm.dual_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.Pdsm.dual_step" title="Permalink to this definition">¶</a></dt>
+<dt id="pdsm.pdsm.Pdsm._dual_step">
+<code class="sig-name descname">_dual_step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdsm/pdsm.html#Pdsm._dual_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.Pdsm._dual_step" title="Permalink to this definition">¶</a></dt>
 <dd><div class="math notranslate nohighlight">
 \[\tilde{\mathbf{y}}_{n+1} = \prox_{\sigma H^{*}}(\mathbf{y}_n - \sigma L(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n)\]</div>
 </dd></dl>
+
+<dl class="py method">
+<dt id="pdsm.pdsm.Pdsm.X">
+<em class="property">property </em><code class="sig-name descname">X</code><a class="headerlink" href="#pdsm.pdsm.Pdsm.X" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py class">
 <dt id="pdsm.pdsm.Pdsm.IterationStats">
@@ -136,6 +194,34 @@ specialise to specific optimisation problems.</p>
 <dd><p>Alias for field number 1</p>
 </dd></dl>
 
+<dl class="py method">
+<dt id="pdsm.pdsm.Pdsm.IterationStats._asdict">
+<code class="sig-name descname">_asdict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pdsm.pdsm.Pdsm.IterationStats._asdict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new dict which maps field names to their values.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pdsm.pdsm.Pdsm.IterationStats._field_defaults">
+<code class="sig-name descname">_field_defaults</code><em class="property"> = {}</em><a class="headerlink" href="#pdsm.pdsm.Pdsm.IterationStats._field_defaults" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pdsm.pdsm.Pdsm.IterationStats._fields">
+<code class="sig-name descname">_fields</code><em class="property"> = ('Iter', 'Time')</em><a class="headerlink" href="#pdsm.pdsm.Pdsm.IterationStats._fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pdsm.pdsm.Pdsm.IterationStats._make">
+<em class="property">classmethod </em><code class="sig-name descname">_make</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iterable</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pdsm.pdsm.Pdsm.IterationStats._make" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a new IterationStats object from a sequence or iterable</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pdsm.pdsm.Pdsm.IterationStats._replace">
+<code class="sig-name descname">_replace</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pdsm.pdsm.Pdsm.IterationStats._replace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new IterationStats object replacing specified fields with new values</p>
+</dd></dl>
+
 </dd></dl>
 
 </dd></dl>
@@ -146,23 +232,66 @@ specialise to specific optimisation problems.</p>
 <dd><p>Bases: <a class="reference internal" href="#pdsm.pdsm.Pdsm" title="pdsm.pdsm.Pdsm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pdsm.pdsm.Pdsm</span></code></a></p>
 <dl class="py class">
 <dt id="pdsm.pdsm.GenericConvBPDN.Option">
-<em class="property">class </em><code class="sig-name descname">Option</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rho_p</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span></em>, <em class="sig-param"><span class="n">rho_d</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span></em>, <em class="sig-param"><span class="n">theta</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdsm/pdsm.html#GenericConvBPDN.Option"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.GenericConvBPDN.Option" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">Option</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">sigma</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">rho</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdsm/pdsm.html#GenericConvBPDN.Option"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.GenericConvBPDN.Option" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pdsm.pdsm.Pdsm.Option" title="pdsm.pdsm.Pdsm.Option"><code class="xref py py-class docutils literal notranslate"><span class="pre">pdsm.pdsm.Pdsm.Option</span></code></a></p>
-<dl class="py attribute">
-<dt id="pdsm.pdsm.GenericConvBPDN.Option.rho_p">
-<code class="sig-name descname">rho_p</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></em><a class="headerlink" href="#pdsm.pdsm.GenericConvBPDN.Option.rho_p" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py method">
+<dt id="pdsm.pdsm.GenericConvBPDN.Option.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">sigma</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">rho</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)">None</a><a class="headerlink" href="#pdsm.pdsm.GenericConvBPDN.Option.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+</dd></dl>
 
 <dl class="py attribute">
-<dt id="pdsm.pdsm.GenericConvBPDN.Option.rho_d">
-<code class="sig-name descname">rho_d</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></em><a class="headerlink" href="#pdsm.pdsm.GenericConvBPDN.Option.rho_d" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="pdsm.pdsm.GenericConvBPDN.Df">
+<code class="sig-name descname">Df</code><em class="property">: np.ndarray</em><a class="headerlink" href="#pdsm.pdsm.GenericConvBPDN.Df" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>D</cite> in FFT domain</p>
+</dd></dl>
 
 <dl class="py attribute">
-<dt id="pdsm.pdsm.GenericConvBPDN.Option.theta">
-<code class="sig-name descname">theta</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></em><a class="headerlink" href="#pdsm.pdsm.GenericConvBPDN.Option.theta" title="Permalink to this definition">¶</a></dt>
+<dt id="pdsm.pdsm.GenericConvBPDN.Yf">
+<code class="sig-name descname">Yf</code><em class="property">: np.ndarray</em><a class="headerlink" href="#pdsm.pdsm.GenericConvBPDN.Yf" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>Y</cite> in FFT domain</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pdsm.pdsm.GenericConvBPDN.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">D</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">S</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">X</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>numpy.ndarray<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">dimK</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Literal<span class="p">[</span>1<span class="p">, </span>2<span class="p">]</span><span class="p">, </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)">None</a><span class="p">, </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dimN</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></span> <span class="o">=</span> <span class="default_value">2</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdsm/pdsm.html#GenericConvBPDN.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.GenericConvBPDN.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pdsm.pdsm.GenericConvBPDN.Sf">
+<code class="sig-name descname">Sf</code><em class="property">: np.ndarray</em><a class="headerlink" href="#pdsm.pdsm.GenericConvBPDN.Sf" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>S</cite> in FFT domain</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pdsm.pdsm.GenericConvBPDN._Xf">
+<code class="sig-name descname">_Xf</code><em class="property">: np.ndarray</em><a class="headerlink" href="#pdsm.pdsm.GenericConvBPDN._Xf" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>X</cite> in FFT domain</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pdsm.pdsm.GenericConvBPDN.reconstruct">
+<code class="sig-name descname">reconstruct</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pdsm/pdsm.html#GenericConvBPDN.reconstruct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.GenericConvBPDN.reconstruct" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="py method">
+<dt id="pdsm.pdsm.GenericConvBPDN.setdict">
+<code class="sig-name descname">setdict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">D</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>numpy.ndarray<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdsm/pdsm.html#GenericConvBPDN.setdict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.GenericConvBPDN.setdict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pdsm.pdsm.GenericConvBPDN._xinit">
+<code class="sig-name descname">_xinit</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pdsm/pdsm.html#GenericConvBPDN._xinit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.GenericConvBPDN._xinit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize primal variable <cite>X</cite></p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pdsm.pdsm.GenericConvBPDN.X">
+<em class="property">property </em><code class="sig-name descname">X</code><a class="headerlink" href="#pdsm.pdsm.GenericConvBPDN.X" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter of <cite>X</cite></p>
 </dd></dl>
 
 <dl class="py class">
@@ -181,17 +310,41 @@ specialise to specific optimisation problems.</p>
 <dd><p>Alias for field number 1</p>
 </dd></dl>
 
+<dl class="py method">
+<dt id="pdsm.pdsm.GenericConvBPDN.IterationStats._asdict">
+<code class="sig-name descname">_asdict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pdsm.pdsm.GenericConvBPDN.IterationStats._asdict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new dict which maps field names to their values.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="pdsm.pdsm.GenericConvBPDN.timer">
-<code class="sig-name descname">timer</code><em class="property">: sporco.util.Timer</em><a class="headerlink" href="#pdsm.pdsm.GenericConvBPDN.timer" title="Permalink to this definition">¶</a></dt>
+<dt id="pdsm.pdsm.GenericConvBPDN.IterationStats._field_defaults">
+<code class="sig-name descname">_field_defaults</code><em class="property"> = {}</em><a class="headerlink" href="#pdsm.pdsm.GenericConvBPDN.IterationStats._field_defaults" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt id="pdsm.pdsm.GenericConvBPDN.opt">
-<code class="sig-name descname">opt</code><em class="property">: <a class="reference internal" href="#pdsm.pdsm.Pdsm.Option" title="pdsm.pdsm.Pdsm.Option">pdsm.pdsm.Pdsm.Option</a></em><a class="headerlink" href="#pdsm.pdsm.GenericConvBPDN.opt" title="Permalink to this definition">¶</a></dt>
+<dt id="pdsm.pdsm.GenericConvBPDN.IterationStats._fields">
+<code class="sig-name descname">_fields</code><em class="property"> = ('Iter', 'Time')</em><a class="headerlink" href="#pdsm.pdsm.GenericConvBPDN.IterationStats._fields" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt id="pdsm.pdsm.GenericConvBPDN.IterationStats._make">
+<em class="property">classmethod </em><code class="sig-name descname">_make</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iterable</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pdsm.pdsm.GenericConvBPDN.IterationStats._make" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a new IterationStats object from a sequence or iterable</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pdsm.pdsm.GenericConvBPDN.IterationStats._replace">
+<code class="sig-name descname">_replace</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pdsm.pdsm.GenericConvBPDN.IterationStats._replace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new IterationStats object replacing specified fields with new values</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt id="pdsm.pdsm.GenericConvBPDN.Xf">
+<em class="property">property </em><code class="sig-name descname">Xf</code><a class="headerlink" href="#pdsm.pdsm.GenericConvBPDN.Xf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter of <cite>Xf</cite></p>
+</dd></dl>
 
 </dd></dl>
 
@@ -199,17 +352,6 @@ specialise to specific optimisation problems.</p>
 <dt id="pdsm.pdsm.ConvBPDNL1">
 <em class="property">class </em><code class="sig-prename descclassname">pdsm.pdsm.</code><code class="sig-name descname">ConvBPDNL1</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdsm/pdsm.html#ConvBPDNL1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pdsm.pdsm.GenericConvBPDN" title="pdsm.pdsm.GenericConvBPDN"><code class="xref py py-class docutils literal notranslate"><span class="pre">pdsm.pdsm.GenericConvBPDN</span></code></a></p>
-<dl class="py class">
-<dt id="pdsm.pdsm.ConvBPDNL1.Option">
-<em class="property">class </em><code class="sig-name descname">Option</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rho_p</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span></em>, <em class="sig-param"><span class="n">rho_d</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span></em>, <em class="sig-param"><span class="n">theta</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span></em>, <em class="sig-param"><span class="n">h</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)">None</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdsm/pdsm.html#ConvBPDNL1.Option"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1.Option" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pdsm.pdsm.GenericConvBPDN.Option" title="pdsm.pdsm.GenericConvBPDN.Option"><code class="xref py py-class docutils literal notranslate"><span class="pre">pdsm.pdsm.GenericConvBPDN.Option</span></code></a></p>
-<dl class="py attribute">
-<dt id="pdsm.pdsm.ConvBPDNL1.Option.h">
-<code class="sig-name descname">h</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)">None</a></em><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1.Option.h" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
 <dl class="py class">
 <dt id="pdsm.pdsm.ConvBPDNL1.IterationStats">
 <em class="property">class </em><code class="sig-name descname">IterationStats</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Iter</span></em>, <em class="sig-param"><span class="n">Time</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1.IterationStats" title="Permalink to this definition">¶</a></dt>
@@ -226,17 +368,72 @@ specialise to specific optimisation problems.</p>
 <dd><p>Alias for field number 1</p>
 </dd></dl>
 
+<dl class="py method">
+<dt id="pdsm.pdsm.ConvBPDNL1.IterationStats._asdict">
+<code class="sig-name descname">_asdict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1.IterationStats._asdict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new dict which maps field names to their values.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="pdsm.pdsm.ConvBPDNL1.timer">
-<code class="sig-name descname">timer</code><em class="property">: sporco.util.Timer</em><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1.timer" title="Permalink to this definition">¶</a></dt>
+<dt id="pdsm.pdsm.ConvBPDNL1.IterationStats._field_defaults">
+<code class="sig-name descname">_field_defaults</code><em class="property"> = {}</em><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1.IterationStats._field_defaults" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt id="pdsm.pdsm.ConvBPDNL1.opt">
-<code class="sig-name descname">opt</code><em class="property">: <a class="reference internal" href="#pdsm.pdsm.Pdsm.Option" title="pdsm.pdsm.Pdsm.Option">pdsm.pdsm.Pdsm.Option</a></em><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1.opt" title="Permalink to this definition">¶</a></dt>
+<dt id="pdsm.pdsm.ConvBPDNL1.IterationStats._fields">
+<code class="sig-name descname">_fields</code><em class="property"> = ('Iter', 'Time')</em><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1.IterationStats._fields" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt id="pdsm.pdsm.ConvBPDNL1.IterationStats._make">
+<em class="property">classmethod </em><code class="sig-name descname">_make</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iterable</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1.IterationStats._make" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a new IterationStats object from a sequence or iterable</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pdsm.pdsm.ConvBPDNL1.IterationStats._replace">
+<code class="sig-name descname">_replace</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1.IterationStats._replace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new IterationStats object replacing specified fields with new values</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pdsm.pdsm.ConvBPDNL1.Df">
+<code class="sig-name descname">Df</code><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1.Df" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pdsm.pdsm.ConvBPDNL1._Xf">
+<code class="sig-name descname">_Xf</code><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1._Xf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pdsm.pdsm.ConvBPDNL1.Sf">
+<code class="sig-name descname">Sf</code><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1.Sf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pdsm.pdsm.ConvBPDNL1.Yf">
+<code class="sig-name descname">Yf</code><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1.Yf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="pdsm.pdsm.ConvBPDNL1.Option">
+<em class="property">class </em><code class="sig-name descname">Option</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">sigma</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">rho</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdsm/pdsm.html#ConvBPDNL1.Option"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1.Option" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pdsm.pdsm.GenericConvBPDN.Option" title="pdsm.pdsm.GenericConvBPDN.Option"><code class="xref py py-class docutils literal notranslate"><span class="pre">pdsm.pdsm.GenericConvBPDN.Option</span></code></a></p>
+<dl class="py method">
+<dt id="pdsm.pdsm.ConvBPDNL1.Option.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">sigma</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">rho</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)">None</a><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1.Option.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pdsm.pdsm.ConvBPDNL1.Option.h">
+<code class="sig-name descname">h</code><em class="property"> = None</em><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1.Option.h" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
 
 </dd></dl>
 
@@ -246,42 +443,7 @@ specialise to specific optimisation problems.</p>
 <dd><p>Bases: <a class="reference internal" href="#pdsm.pdsm.GenericConvBPDN" title="pdsm.pdsm.GenericConvBPDN"><code class="xref py py-class docutils literal notranslate"><span class="pre">pdsm.pdsm.GenericConvBPDN</span></code></a></p>
 <p>Solve the optimization problem</p>
 <div class="math notranslate nohighlight">
-\[\argmin_{\mathbf{x}} \| \mathbf{D}\mathbf{x} - \mathbf{s} \|_{1} + \| \mathbf{x} \|_{1}\]</div>
-<dl class="py class">
-<dt id="pdsm.pdsm.ConvBPDNL1L1.Option">
-<em class="property">class </em><code class="sig-name descname">Option</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rho_p</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span></em>, <em class="sig-param"><span class="n">rho_d</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span></em>, <em class="sig-param"><span class="n">theta</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdsm/pdsm.html#ConvBPDNL1L1.Option"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1L1.Option" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pdsm.pdsm.GenericConvBPDN.Option" title="pdsm.pdsm.GenericConvBPDN.Option"><code class="xref py py-class docutils literal notranslate"><span class="pre">pdsm.pdsm.GenericConvBPDN.Option</span></code></a></p>
-<dl class="py attribute">
-<dt id="pdsm.pdsm.ConvBPDNL1L1.Option.rho_p">
-<code class="sig-name descname">rho_p</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></em><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1L1.Option.rho_p" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="pdsm.pdsm.ConvBPDNL1L1.Option.rho_d">
-<code class="sig-name descname">rho_d</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></em><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1L1.Option.rho_d" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="pdsm.pdsm.ConvBPDNL1L1.Option.theta">
-<code class="sig-name descname">theta</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></em><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1L1.Option.theta" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="pdsm.pdsm.ConvBPDNL1L1.cri">
-<code class="sig-name descname">cri</code><em class="property">: sporco.cnvrep.CSC_ConvRepIndexing</em><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1L1.cri" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="pdsm.pdsm.ConvBPDNL1L1.primal_step">
-<code class="sig-name descname">primal_step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdsm/pdsm.html#ConvBPDNL1L1.primal_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1L1.primal_step" title="Permalink to this definition">¶</a></dt>
-<dd><div class="math notranslate nohighlight">
-\[\begin{split}\tilde{\mathbf{x}}_{n+1} &amp;= \prox_{\tau \|\bullet\|_{1}}(\mathbf{x}_n - \tau \mathbf{D}^{\dagger}\mathbf{y}_n)\\
-&amp;= \mathcal{S}_{\tau}(\mathbf{x}_n - \tau \mathbf{D}^{\dagger}\mathbf{y}_n)\\
-&amp;= \mathrm{sign}(\mathbf{x}_n - \tau \mathbf{D}^{\dagger}\mathbf{y}_n) \odot \max(0, |\mathbf{x}_n - \tau \mathbf{D}^{\dagger}\mathbf{y}_n| - \tau)\end{split}\]</div>
-</dd></dl>
-
+\[\argmin_{\mathbf{x}} \| \mathbf{D}\mathbf{x} - \mathbf{s} \|_{1} + \lambda\| \mathbf{x} \|_{1}\]</div>
 <dl class="py class">
 <dt id="pdsm.pdsm.ConvBPDNL1L1.IterationStats">
 <em class="property">class </em><code class="sig-name descname">IterationStats</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Iter</span></em>, <em class="sig-param"><span class="n">Time</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1L1.IterationStats" title="Permalink to this definition">¶</a></dt>
@@ -298,15 +460,91 @@ specialise to specific optimisation problems.</p>
 <dd><p>Alias for field number 1</p>
 </dd></dl>
 
+<dl class="py method">
+<dt id="pdsm.pdsm.ConvBPDNL1L1.IterationStats._asdict">
+<code class="sig-name descname">_asdict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1L1.IterationStats._asdict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new dict which maps field names to their values.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pdsm.pdsm.ConvBPDNL1L1.IterationStats._field_defaults">
+<code class="sig-name descname">_field_defaults</code><em class="property"> = {}</em><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1L1.IterationStats._field_defaults" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pdsm.pdsm.ConvBPDNL1L1.IterationStats._fields">
+<code class="sig-name descname">_fields</code><em class="property"> = ('Iter', 'Time')</em><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1L1.IterationStats._fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pdsm.pdsm.ConvBPDNL1L1.IterationStats._make">
+<em class="property">classmethod </em><code class="sig-name descname">_make</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iterable</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1L1.IterationStats._make" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a new IterationStats object from a sequence or iterable</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pdsm.pdsm.ConvBPDNL1L1.dual_step">
-<code class="sig-name descname">dual_step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdsm/pdsm.html#ConvBPDNL1L1.dual_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1L1.dual_step" title="Permalink to this definition">¶</a></dt>
+<dt id="pdsm.pdsm.ConvBPDNL1L1.IterationStats._replace">
+<code class="sig-name descname">_replace</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1L1.IterationStats._replace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new IterationStats object replacing specified fields with new values</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pdsm.pdsm.ConvBPDNL1L1.Option">
+<em class="property">class </em><code class="sig-name descname">Option</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">sigma</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">rho</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">lambda_</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdsm/pdsm.html#ConvBPDNL1L1.Option"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1L1.Option" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pdsm.pdsm.Pdsm.Option" title="pdsm.pdsm.Pdsm.Option"><code class="xref py py-class docutils literal notranslate"><span class="pre">pdsm.pdsm.Pdsm.Option</span></code></a></p>
+<dl class="py method">
+<dt id="pdsm.pdsm.ConvBPDNL1L1.Option.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">sigma</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">rho</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">lambda_</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)">None</a><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1L1.Option.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pdsm.pdsm.ConvBPDNL1L1.Option.lambda_">
+<code class="sig-name descname">lambda_</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></em><em class="property"> = 1</em><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1L1.Option.lambda_" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pdsm.pdsm.ConvBPDNL1L1.cri">
+<code class="sig-name descname">cri</code><em class="property">: cr.CSC_ConvRepIndexing</em><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1L1.cri" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pdsm.pdsm.ConvBPDNL1L1.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">D</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">S</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">X</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>numpy.ndarray<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">opt</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference internal" href="#pdsm.pdsm.ConvBPDNL1L1.Option" title="pdsm.pdsm.ConvBPDNL1L1.Option">pdsm.pdsm.ConvBPDNL1L1.Option</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dimK</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Literal<span class="p">[</span>1<span class="p">, </span>2<span class="p">]</span><span class="p">, </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)">None</a><span class="p">, </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dimN</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></span> <span class="o">=</span> <span class="default_value">2</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)">None</a><a class="reference internal" href="_modules/pdsm/pdsm.html#ConvBPDNL1L1.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1L1.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pdsm.pdsm.ConvBPDNL1L1.opt">
+<code class="sig-name descname">opt</code><em class="property">: <a class="reference internal" href="#pdsm.pdsm.ConvBPDNL1L1.Option" title="pdsm.pdsm.ConvBPDNL1L1.Option">ConvBPDNL1L1.Option</a></em><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1L1.opt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pdsm.pdsm.ConvBPDNL1L1._yinit">
+<code class="sig-name descname">_yinit</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pdsm/pdsm.html#ConvBPDNL1L1._yinit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1L1._yinit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize dual variable <cite>Y</cite> with zeros (adhocly)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pdsm.pdsm.ConvBPDNL1L1._primal_step">
+<code class="sig-name descname">_primal_step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdsm/pdsm.html#ConvBPDNL1L1._primal_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1L1._primal_step" title="Permalink to this definition">¶</a></dt>
 <dd><div class="math notranslate nohighlight">
-\[\begin{split}\tilde{\mathbf{y}}_{n+1} &amp;= \prox_{\sigma \|\bullet\|_{1}^{*}}(\mathbf{y}_n - \sigma \mathbf{D}(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n))\\
-&amp;= \mathbf{y}_n - \sigma \mathbf{D}(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n) - \sigma\prox_{\frac{1}{\sigma}\|\bullet\|_{1}}(\frac{\mathbf{y}_n}{\sigma} - \mathbf{D}(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n))\\
-&amp;= \mathbf{y}_n - \sigma \mathbf{D}(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n) - \sigma\mathcal{S}_{\frac{1}{\sigma}}(\frac{\mathbf{y}_n}{\sigma} - \mathbf{D}(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n))\\\end{split}\]</div>
+\[\begin{split}\tilde{\mathbf{x}}_{n+1}=  &amp;\prox_{\tau\lambda \|\bullet\|_{1}}(\mathbf{x}_n - \tau \mathbf{D}^{\dagger}\mathbf{y}_n)\\
+&amp;= \mathcal{S}_{\tau\lambda}(\mathbf{x}_n - \tau \mathbf{D}^{\dagger}\mathbf{y}_n)\\
+&amp;= \mathrm{sign}(\mathbf{x}_n - \tau \mathbf{D}^{\dagger}\mathbf{y}_n) \odot \max(0, |\mathbf{x}_n - \tau \mathbf{D}^{\dagger}\mathbf{y}_n| - \tau\lambda)\end{split}\]</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pdsm.pdsm.ConvBPDNL1L1._dual_step">
+<code class="sig-name descname">_dual_step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pdsm/pdsm.html#ConvBPDNL1L1._dual_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pdsm.pdsm.ConvBPDNL1L1._dual_step" title="Permalink to this definition">¶</a></dt>
+<dd><div class="math notranslate nohighlight">
+\[\begin{split}\tilde{\mathbf{y}}_{n+1} &amp;= \prox_{\sigma\lambda \|\bullet\|_{1}^{*}}(\mathbf{y}_n - \sigma \mathbf{D}(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n))\\
+&amp;= \mathbf{y}_n - \sigma \mathbf{D}(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n) - \sigma\prox_{\frac{1}{\sigma\lambda}\|\bullet\|_{1}}(\frac{\mathbf{y}_n}{\sigma\lambda} - \frac{1}{\lambda}\mathbf{D}(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n))\\
+&amp;= \mathbf{y}_n - \sigma \mathbf{D}(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n) - \sigma\mathcal{S}_{\frac{1}{\sigma\lambda}}(\frac{\mathbf{y}_n}{\sigma\lambda} - \frac{1}{\lambda}\mathbf{D}(2\tilde{\mathbf{x}}_{n+1} - \mathbf{x}_n))\\\end{split}\]</div>
 </dd></dl>
 
 </dd></dl>
