@@ -4,3 +4,4 @@ datasets
 __pycache__
 /dist
 .mypy_cache
+*.egg-info

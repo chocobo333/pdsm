@@ -1,4 +1,0 @@
-
-    [console_scripts]
-    thesis_test = pdsm._thesis:run
-    
